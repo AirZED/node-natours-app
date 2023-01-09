@@ -5,6 +5,29 @@ const tours = JSON.parse(
 );
 //I am using the sync readFile method because we are in the top level code and the blocking won't affect the event loop
 
+exports.checkID = (req, res, next, val) => {
+  console.log(`tour id is ${val}`);
+
+  if (tours.length < +val || +val < 0) {
+    return res.status(404).json({
+      status: 'failed',
+      message: 'could not locate tour in db',
+    });
+  }
+  next();
+};
+
+exports.checkBody = (req, res, next) => {
+  // middleware 1
+  if (!req.body.price || !req.body.name) {
+    return res.status(400).json({
+      status: 'fail',
+      message: `Missing ${req.body.price ? 'name!!!' : 'price!!!'}!!!`,
+    });
+  }
+  next();
+};
+
 //ROUTES HANDLERS
 exports.getAlltours = (req, res) => {
   console.log(req.requestTime);
@@ -24,14 +47,14 @@ exports.getSingltour = (req, res) => {
   const matchedTour = tours[+tourId];
 
   //incase param value is too large
-  if (!matchedTour) {
-    return res.status(404).json({
-      status: 'failed',
-      message: {
-        message: 'Could not locate tour in database',
-      },
-    });
-  }
+  //   if (!matchedTour) {
+  //     return res.status(404).json({
+  //       status: 'failed',
+  //       message: {
+  //         message: 'Could not locate tour in database',
+  //       },
+  //     });
+  //   }
 
   res.status(200).json({
     status: 'success',
@@ -44,7 +67,6 @@ exports.postAlltours = (req, res) => {
 
   //the object to assign merges two arrays
   const newTour = Object.assign({ _id: newId }, req.body);
-  res.send('deleted successfully');
   tours.push(newTour);
 
   fs.writeFile(
@@ -116,12 +138,6 @@ exports.patchtour = (req, res) => {
 exports.deleteSingletour = (req, res) => {
   const { id: tourId } = req.params;
 
-  if (tours.length < +tourId) {
-    return res.status(404).json({
-      status: 'failed',
-      message: 'could not locate tour in db',
-    });
-  }
   tours.splice(+tourId, 1);
 
   fs.writeFile(
@@ -131,12 +147,6 @@ exports.deleteSingletour = (req, res) => {
       (req, res) => {
         const { id: tourId } = req.params;
 
-        if (tours.length < +tourId) {
-          return res.status(404).json({
-            status: 'failed',
-            message: 'could not locate tour in db',
-          });
-        }
         tours.splice(+tourId, 1);
 
         fs.writeFile(

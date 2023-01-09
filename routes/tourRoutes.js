@@ -12,10 +12,13 @@ const tourController = require('../controllers/tourController');
 
 //mounting route
 const router = express.Router();
+
+router.param('id', tourController.checkID);
+
 router
   .route(`/`)
   .get(tourController.getAlltours)
-  .post(tourController.postAlltours);
+  .post(tourController.checkBody, tourController.postAlltours);
 
 router
   .route(`/:id`)
