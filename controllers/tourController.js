@@ -144,29 +144,6 @@ exports.deleteSingletour = (req, res) => {
     `${__dirname}/../dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
     (err, data) => {
-      (req, res) => {
-        const { id: tourId } = req.params;
-
-        tours.splice(+tourId, 1);
-
-        fs.writeFile(
-          `${__dirname}/../dev-data/data/tours-simple.json`,
-          JSON.stringify(tours),
-          (err, data) => {
-            if (err) {
-              return res.status(404).json({
-                status: 'failed',
-                message: 'tour not found',
-              });
-            }
-
-            res.status(204).json({
-              status: 'success',
-              data: null,
-            });
-          }
-        );
-      };
       if (err) {
         return res.status(404).json({
           status: 'failed',
