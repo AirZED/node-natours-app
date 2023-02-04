@@ -72,7 +72,7 @@ exports.postAlltours = (req, res) => {
   fs.writeFile(
     `${__dirname}/../dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
-    (err, data) => {
+    (err) => {
       if (err) {
         return res.status(404).json({
           status: 'failed',
@@ -115,7 +115,7 @@ exports.patchtour = (req, res) => {
   fs.writeFile(
     `${__dirname}/../dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
-    (err, data) => {
+    (err) => {
       if (err) {
         return res.status(404).json({
           status: 'failed',
@@ -143,7 +143,7 @@ exports.deleteSingletour = (req, res) => {
   fs.writeFile(
     `${__dirname}/../dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
-    (err, data) => {
+    (err) => {
       if (err) {
         return res.status(404).json({
           status: 'failed',
