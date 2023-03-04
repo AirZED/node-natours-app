@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start:dev": "nodemon server.js",
+    "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js"
   },
   "author": "Mfoniso Ukpabio",
@@ -12,18 +12,23 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "morgan": "^1.10.0"
+    "mongoose": "^5.13.15",
+    "morgan": "^1.10.0",
+    "slugify": "^1.6.5"
   },
   "devDependencies": {
     "eslint": "^8.31.0",
-    "eslint-config-prettier": "^8.6.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "^2.8.2",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx": "^0.1.0",
     "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.11",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.2"
+  },
+  "engines": {
+    "node": ">=10.0.0"
   }
 }

@@ -13,16 +13,21 @@ const tourController = require('../controllers/tourController');
 //mounting route
 const router = express.Router();
 
-router.param('id', tourController.checkID);
+router
+  .route('/top-5-cheap-tours')
+  .get(tourController.aliasTopTours, tourController.getAlltours);
 
+router.route('/tour-stats').get(tourController.getAllStats);
+router.route('/:year/monthly-plan').get(tourController.getMonthlyPlan);
 router
   .route(`/`)
   .get(tourController.getAlltours)
-  .post(tourController.checkBody, tourController.postAlltours);
+  .post(tourController.createTour);
 
 router
-  .route(`/:id`)
+  .route(`/:tourName`)
   .get(tourController.getSingltour)
+
   .patch(tourController.patchtour)
   .delete(tourController.deleteSingletour);
 
