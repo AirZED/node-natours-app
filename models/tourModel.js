@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const slugify = require('slugify');
+const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -10,6 +11,9 @@ const tourSchema = new mongoose.Schema(
       //the array on required the second object as a fallback document incase none has been specified
       unique: true,
       trim: true,
+      maxLength: [40, ' A tour name most have less or equal 40 characters'],
+      minLength: [5, 'A tour name must have more or equal 5 characters'],
+      // validate: [validator.isAlpa, 'Name must contain only alphabets'],
     },
     slug: String,
     duration: {
@@ -23,6 +27,10 @@ const tourSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       required: [true, 'A tour must have a difficulty'],
+      enum: {
+        values: ['easy', 'medium', 'difficult'],
+        message: 'Difficulty is either easy, medium or difficult',
+      },
     },
     rating: {
       type: Number,
@@ -40,7 +48,17 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'A tour must have a price'],
     },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {
+        //this validator can only work when creating new documents as the this keyword points to an updating object during updates
+        validator: function (val) {
+          //value is the value the the user entered
+          return val < this.price; //returns true, if val is discount is greater than price, this returns false and triggers the validate
+        },
+        message: 'Discount price [{VALUE}] should be below regular price',
+      },
+    },
     summary: {
       type: String,
       trim: true,
@@ -99,9 +117,31 @@ tourSchema.pre('save', function (next) {
 // });
 
 //QUERY MIDDLEWARE
-tourSchema.pre('find', function (next) {
+// /^find/ this is a regular expression that runs for every situation that starts with find
+tourSchema.pre(/^find/, function (next) {
   //setting this to find and return only tours where secret tours is not equal to true
   this.find({ secretTour: { $ne: true } });
+  this.start = Date.now();
+  next();
+});
+//The above runs before the find
+
+tourSchema.post(/^find/, function (docs, next) {
+  console.log(
+    `${
+      Date.now() - this.start
+    } is the amount of time it took our query middleware to switch from start to finish`
+  );
+  next();
+});
+//the above runs after the find
+
+//AGGREGATION MIDDLEWARE
+tourSchema.pre('aggregate', function (next) {
+  //this point to the current aggregation object
+  //the pipeline object is an array of all the methods we added, hance we are trying to oput somthing in out array
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  // console.log(this.pipeline());
   next();
 });
 
