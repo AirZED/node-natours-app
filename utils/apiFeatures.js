@@ -2,7 +2,7 @@ class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
     this.queryString = queryString;
-    console.log(this.query, this.queryString);
+    // console.log(this.query, this.queryString);
   }
 
   filter() {
