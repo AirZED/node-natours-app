@@ -2,6 +2,7 @@ const express = require('express');
 
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
+
 //mounting route
 const router = express.Router();
 
@@ -27,4 +28,8 @@ router
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
 
+
+
 module.exports = router;
+
+

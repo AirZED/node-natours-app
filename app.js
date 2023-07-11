@@ -12,6 +12,7 @@ const errorController = require('./controllers/errorController');
 //importing routers
 const tourRouter = require(`${__dirname}/routes/tourRoutes`);
 const userRouter = require(`${__dirname}/routes/userRoutes`);
+const reviewRouter = require(`${__dirname}/routes/reviewRoutes`);
 
 const app = express();
 // set security http
@@ -54,6 +55,7 @@ app.use((req, res, next) => {
 //mounting the tours
 app.use(`/api/v1/users`, userRouter);
 app.use(`/api/v1/tours`, tourRouter);
+app.use(`/api/v1/reviews`, reviewRouter);
 
 // This middleware can only execute if the above two where not executed, hence it is a better way to handle errors
 // no need to call next though

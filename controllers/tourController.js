@@ -93,7 +93,7 @@ exports.getAlltours = catchAsync(async (req, res, next) => {
   //SEND RESPONSE
   res.status(200).json({
     status: 'success',
-    length: allTours.length,
+  length: allTours.length,
     data: {
       tours: allTours,
     },
@@ -102,9 +102,10 @@ exports.getAlltours = catchAsync(async (req, res, next) => {
 
 exports.getSingltour = catchAsync(async (req, res, next) => {
   const { tourName } = req.params;
+
   const matchedTour = await Tour.find({
     name: tourName,
-  });
+  }).populate('reviews');
 
   if (matchedTour.length < 1) {
     return next(new AppError('No tour with that name is found', 404));
@@ -133,6 +134,7 @@ exports.patchtour = catchAsync(async (req, res, next) => {
     }
     //setting new to true in the third argument ensures what is returned is the new object or doument and runValidators to true runs the inbbuilt schema validation each time a document is recreated
   );
+
   res.status(201).json({
     status: 'success',
     data: {
@@ -143,6 +145,11 @@ exports.patchtour = catchAsync(async (req, res, next) => {
 
 exports.deleteSingletour = catchAsync(async (req, res, next) => {
   const { tourName } = req.params;
+
+  console.log(tourName);
+
+  const t = await Tour.findOne({ name: tourName });
+  console.log(t);
 
   const deletedTour = await Tour.findOneAndDelete(
     {

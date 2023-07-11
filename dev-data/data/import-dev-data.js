@@ -32,7 +32,7 @@ mongoose
 
 //READ JSON FIlE
 const tours = fs.readFileSync(
-  `${__dirname}/../data/tours-simple.json`,
+  `${__dirname}/../data/tours.json`,
   'utf-8'
 );
 

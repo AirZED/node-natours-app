@@ -59,10 +59,8 @@ UserSchema.pre('save', async function (next) {
 UserSchema.pre('save', async function (next) {
   // Check and only updates the password to it hash if its being changed or created for the first time
   if (!this.isModified('password')) return next();
-
   // Encrypts the password
   this.password = await bcrypt.hash(this.password, 12);
-
   // in this case we also need to delete the confirm password so we dont have to hash it
   this.passwordConfirm = undefined;
   next();

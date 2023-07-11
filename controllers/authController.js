@@ -30,7 +30,7 @@ const createSendToken = (user, statusCode, res) => {
   // this makes the password and active not show in the response it send to the browser
   user.password = undefined;
   user.active = undefined;
-  
+
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -113,7 +113,7 @@ exports.restrictTo = (...roles) => {
     // the req.user is accessed from the last middleware
     if (!roles.includes(req.user.role)) {
       throw new AppError(
-        "You don't have permission to perform this action",
+        "You don't have permission to perform this action only admin or tour guide can perform this actione",
         403
       );
     }

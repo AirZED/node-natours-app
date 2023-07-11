@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+// const User = require('./userModel');
 const slugify = require('slugify');
 const validator = require('validator');
 
@@ -86,13 +86,48 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    
+
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+
+    // reviews: [{ type: mongoose.Schema.ObjectId, ref: 'Review' }],
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+// virtual populate
+// It wouldn't really make sense implementing this logic on get all tours, hence, I would implement it on getSingleTour
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 //using the document middleware in mongoose
@@ -104,16 +139,12 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
-// //Another Premiddleware
-// tourSchema.pre('save', function (next) {
-//   console.log('Eh don be, eh don happen');
-//   next();
-// });
+// this pre save middle ware runs just before the document is saved, it help convert the guide id to corresponding guide objects
+// Ensure to use this function in the future
+// tourSchema.pre('save', async function (next) {
+//   const guidePromises = this.guides.map(async (id) => await User.findById(id));
+//   this.guides = await Promise.all(guidePromises);
 
-// //the post middleware function is executed after all premiddlewares are completed
-// tourSchema.post('save', function (doc, next) {
-//   // this post middleware has access to the next function and the document that is coming back
-//   console.log(doc);
 //   next();
 // });
 
@@ -126,6 +157,11 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 //The above runs before the find
+
+tourSchema.pre(/^find/, function (next) {
+  this.populate({ path: 'guides', select: '-__v -passwordChangeAt' });
+  next();
+});
 
 tourSchema.post(/^find/, function (docs, next) {
   console.log(
