@@ -33,17 +33,35 @@ router
   .get(tourController.aliasTopTours, tourController.getAlltours);
 
 router.route('/tour-stats').get(tourController.getAllStats);
-router.route('/:year/monthly-plan').get(tourController.getMonthlyPlan);
+router
+  .route('/:year/monthly-plan')
+  .get(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide', 'guide'),
+    tourController.getMonthlyPlan
+  );
+
+// geospatial stuffs
+router.route('/tours-within/:distance/center/:latlng/unit/:unit', tourController.getToursWithin);
+
 router
   .route(`/`)
-  .get(authController.protect, tourController.getAlltours)
-  .post(tourController.createTour);
+  .get(tourController.getAlltours)
+  .post(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    tourController.createTour
+  );
 
 router
-  .route(`/:tourName`)
+  .route(`/:id`)
   .get(tourController.getSingltour)
 
-  .patch(tourController.patchtour)
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin', 'tour-guide'),
+    tourController.patchtour
+  )
   .delete(
     authController.protect,
     authController.restrictTo('admin', 'tour-guide'),

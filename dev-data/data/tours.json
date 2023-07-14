@@ -466,17 +466,5 @@
         "day": 5
       }
     ]
-  },
-  {
-    "_id": "5c88fa8cf4afda39709c296c1",
-    "body": "test tour",
-    "duration": "6 days",
-    "difficulty": "easy"
-  },
-  {
-    "_id": "5c88fa8cf4afda39709c296c11",
-    "body": "test tour",
-    "duration": "6 days",
-    "difficulty": "easy"
   }
 ]

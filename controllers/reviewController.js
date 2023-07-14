@@ -1,38 +1,24 @@
-const catchAsync = require('./../utils/catchAsync');
+// const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
-
+const factory = require('../controllers/handlerFactory');
 const Review = require('../models/reviewModel');
 
-exports.createReview = catchAsync(async (req, res, next) => {
+exports.setTourAndUserId = (req, res, next) => {
   // allow nested routing
   if (!req.body.tour) req.body.tour = req.params.tourId;
-  if (!req.body.user) req.body.user = req.user.id;
+  if (!req.body.user) req.body.user = req.params.id;
 
-  const review = await Review.create(req.body);
+  next();
+};
 
-  if (!review) return next(new AppError('Review not created', 400));
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      review,
-    },
-  });
-});
-
-exports.getAllReviews = catchAsync(async (req, res, next) => {
+exports.setFilter = (req, res, next) => {
   let filter = {};
-
   if (req.params.tourId) filter = { tour: req.params.tourId };
+  next();
+};
 
-  const reviews = await Review.find(filter);
-
-  if (!reviews) return next('Reviews not found', 404);
-
-  res.status(201).json({
-    status: 'success',
-    data: {
-      reviews,
-    },
-  });
-});
+exports.getAllReviews = factory.getAll(Review);
+exports.createReview = factory.createOne(Review);
+// Do not update password with this
+exports.updateReview = factory.updateOne(Review);
+exports.deleteReview = factory.deleteOne(Review);

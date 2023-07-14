@@ -39,6 +39,10 @@ const tourSchema = new mongoose.Schema(
     ratingsAverage: {
       type: Number,
       default: 4.5,
+      min: [1, 'Ratings must be above 1.0'],
+      max: [5, 'Rating must be below 5.0'],
+      // Below is used to set value to what is returned from the callback
+      set: (val) => Math.toFixed(2),
     },
     ratingsQuantity: {
       type: Number,
@@ -117,6 +121,10 @@ const tourSchema = new mongoose.Schema(
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
+
+// in the indexing, mongo db goes to the particular index searching either up or down
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
