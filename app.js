@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -15,6 +16,15 @@ const userRouter = require(`${__dirname}/routes/userRoutes`);
 const reviewRouter = require(`${__dirname}/routes/reviewRoutes`);
 
 const app = express();
+
+app.set('view engine', 'pug');
+app.set(path.join(__dirname, 'views'));
+
+// GLOBAL MIDDLEWARES
+//comes in here to find the specified filed to be served as static content
+app.use(express.static(path.join(__dirname, 'public')));
+// hence you cannot use 127.0.0.1:3000/public/overview because express would think of this as a normal route and find a route handler for it
+
 // set security http
 app.use(helmet());
 //including global middleware
@@ -43,16 +53,19 @@ app.use(xss());
 // Prevent parameter pollution
 app.use(hpp({ whitelist: ['duration'] }));
 
-//comes in here to find the specified filed to be served as static content
-app.use(express.static(`${__dirname}/public`));
-// hence you cannot use 127.0.0.1:3000/public/overview because express would think of this as a normal route and find a route handler for it
-
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
 });
 
-//mounting the tours
+//MOUNTING THE ROUTES
+app.get('/', (req, res) => {
+  res.status(200).render('base', {
+    tour: 'The Forest Hiker',
+    user: 'Mfoniso Ukpabio',
+  });
+});
+
 app.use(`/api/v1/users`, userRouter);
 app.use(`/api/v1/tours`, tourRouter);
 app.use(`/api/v1/reviews`, reviewRouter);

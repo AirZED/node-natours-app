@@ -42,7 +42,12 @@ router
   );
 
 // geospatial stuffs
-router.route('/tours-within/:distance/center/:latlng/unit/:unit', tourController.getToursWithin);
+router
+  .route('/tours-within/:distance/center/:latlng/unit/:unit')
+  .get(tourController.getToursWithin);
+
+  // getting distances
+router.route('/distances/:latlng/unit/:unit').get(tourController.getDistance);
 
 router
   .route(`/`)
